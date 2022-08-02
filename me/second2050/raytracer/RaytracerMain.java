@@ -7,13 +7,13 @@ import javax.swing.text.NumberFormatter;
 
 class RaytracerMain {
     // global variables
-    static final double IMAGE_ASPECT_RATIO = 16.0/9.0; // without decimal place it will be 1
+    static final double IMAGE_ASPECT_RATIO = 600.0/240.0; // without decimal place it will be 1
     static final int IMAGE_WIDTH = 3840;
     static final int IMAGE_HEIGHT = (int)(IMAGE_WIDTH / IMAGE_ASPECT_RATIO);
     static final String OUTPUT_FILE_NAME = "output.ppm";
     static final int SAMPLES_PER_PIXEL = 50;
     static final double CAMERA_FOCAL_LENGTH = 1.0;
-    static final int CAMERA_FIELD_OF_VIEW = 45;
+    static final int CAMERA_FIELD_OF_VIEW = 30;
     static final int MAX_DEPTH = 50;
 
     public static void main(String[] args) {
@@ -51,21 +51,23 @@ class RaytracerMain {
         // setup world
         Hittables world = new Hittables();
 
-        Material materialGround = new LambertianMaterial(new Color(0.8, 0.8, 0.0));
-        Material materialCenter = new DielectricMaterial(1.5);
-        Material materialCenter2= new MetalMaterial(new Color(1.0, 0.0, 0.5), 0.25);
-        Material materialLeft   = new LambertianMaterial(new Color(0.0, 0.5, 1.0));
-        Material materialRight  = new MetalMaterial(new Color(0.8, 0.6, 0.2), 0.25);
+        Material materialGround  = new LambertianMaterial(new Color(0.8, 0.8, 0.0));
+        Material materialCenter  = new DielectricMaterial(1.5);
+        Material materialCenter2 = new MetalMaterial(new Color(1.0, 0.0, 0.5), 0.25);
+        Material materialLeft    = new LambertianMaterial(new Color(0.0, 0.5, 1.0));
+        Material materialRight   = new MetalMaterial(new Color(0.8, 0.6, 0.2), 0.25);
+        Material materialFront   = new MetalMaterial(new Color(0.1, 0.1, 0.1), 0.90);
 
         world.add(new Sphere(new Vector(0.0, -100.5, -1.0), 100.0, materialGround));
         world.add(new Sphere(new Vector(0.0, 0.0, -1.0), 0.485, materialCenter));
         world.add(new Sphere(new Vector(0.0, 0.0, -1.0), -0.475, materialCenter));
         world.add(new Sphere(new Vector(0.0, 0.0, -1.0), 0.25, materialCenter2));
-        world.add(new Sphere(new Vector(-1.0, 0.0, -1.0), 0.5, materialLeft));
-        world.add(new Sphere(new Vector(1.0, 0.0, -1.0), 0.5, materialRight));
+        world.add(new Sphere(new Vector(-1.0, 0.0, -1.0), 0.485, materialLeft));
+        world.add(new Sphere(new Vector(1.0, 0.0, -1.0), 0.485, materialRight));
+        world.add(new Sphere(new Vector(0.0, 0.0, 0.0), 0.485, materialFront));
 
         // setup camera
-        Camera cam = new Camera(new Vector(-2, 2, 1), new Vector(0, 0, -1), new Vector(0, 1, 0), IMAGE_ASPECT_RATIO, 2.0, CAMERA_FIELD_OF_VIEW, CAMERA_FOCAL_LENGTH);
+        Camera cam = new Camera(new Vector(-2, 4, 1), new Vector(0, 0, -1), new Vector(0, 1, 0), IMAGE_ASPECT_RATIO, 2.0, CAMERA_FIELD_OF_VIEW, CAMERA_FOCAL_LENGTH);
 
         // start rendering timer
         long startTime = System.currentTimeMillis();
@@ -73,14 +75,15 @@ class RaytracerMain {
         // render image
         output.printf("P3\n%d %d\n255\n", IMAGE_WIDTH, IMAGE_HEIGHT); // write file header
         System.out.printf("\n");
-        Renderer[] renderers = new Renderer[8];
+        Renderer[] renderers = new Renderer[Runtime.getRuntime().availableProcessors()];
         int start = IMAGE_HEIGHT - 1;
-        int end = IMAGE_HEIGHT - (IMAGE_HEIGHT / renderers.length);
+        int step = (IMAGE_HEIGHT / renderers.length);
+        int end = IMAGE_HEIGHT - step;
         for (int i = 0; i < renderers.length; i++) {
             renderers[i] = new Renderer(i, start, end, cam, world);
             renderers[i].start();
             start = end - 1;
-            end = end - (IMAGE_HEIGHT / renderers.length);
+            end = end - step;
         }
         for (int i = 0; i < renderers.length; i++) {
             try {
@@ -94,7 +97,7 @@ class RaytracerMain {
 
         // output runtime to user
         long endTime = System.currentTimeMillis();
-        System.out.printf("Rendering time: %f seconds", (endTime - startTime) / 1000d);
+        System.out.printf("Rendering time: %f seconds\n", (endTime - startTime) / 1000d);
 
         output.flush();
         output.close(); // close file to ensure correct writing to storage
