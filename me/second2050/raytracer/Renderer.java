@@ -4,6 +4,7 @@ import java.util.Random;
 
 class Renderer extends Thread {
     private String result;
+    private int id;
     private int start;
     private int end;
     private Camera cam;
@@ -11,7 +12,8 @@ class Renderer extends Thread {
 
     private final Random RAND = new Random();
 
-    public Renderer(int start, int end, Camera cam, Hittables world) {
+    public Renderer(int id, int start, int end, Camera cam, Hittables world) {
+        this.id = id;
         this.start = start;
         this.end = end;
         this.cam = cam;
@@ -19,7 +21,7 @@ class Renderer extends Thread {
     }
 
     public void run() {
-        System.out.printf("I am here!\n  %d→%d\n", start, end);
+        System.out.printf("THREAD%d: Starting rendering! %d→%d\n", id, start, end);
 
         StringBuilder sb = new StringBuilder();
 
@@ -36,9 +38,9 @@ class Renderer extends Thread {
             }
         }
 
-        System.out.printf("Almost done!\n  %d→%d\n", start, end);
+        System.out.printf("THREAD%d: Storing result!\n", id, start, end);
         result = sb.toString();
-        System.out.printf("I am done!\n  %d→%d\n", start, end);
+        System.out.printf("THREAD%d: Finished rendering!\n", id, start, end);
         return;
     }
     public String getResult() {

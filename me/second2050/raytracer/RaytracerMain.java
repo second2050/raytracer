@@ -8,7 +8,7 @@ import javax.swing.text.NumberFormatter;
 class RaytracerMain {
     // global variables
     static final double IMAGE_ASPECT_RATIO = 16.0/9.0; // without decimal place it will be 1
-    static final int IMAGE_WIDTH = 480;
+    static final int IMAGE_WIDTH = 3840;
     static final int IMAGE_HEIGHT = (int)(IMAGE_WIDTH / IMAGE_ASPECT_RATIO);
     static final String OUTPUT_FILE_NAME = "output.ppm";
     static final int SAMPLES_PER_PIXEL = 50;
@@ -77,7 +77,7 @@ class RaytracerMain {
         int start = IMAGE_HEIGHT - 1;
         int end = IMAGE_HEIGHT - (IMAGE_HEIGHT / renderers.length);
         for (int i = 0; i < renderers.length; i++) {
-            renderers[i] = new Renderer(start, end, cam, world);
+            renderers[i] = new Renderer(i, start, end, cam, world);
             renderers[i].start();
             start = end - 1;
             end = end - (IMAGE_HEIGHT / renderers.length);
