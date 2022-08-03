@@ -1,6 +1,9 @@
+# files
 *.class
-*.ppm
-.directory
 *.log
+*.ppm
+
+# directories
+.directory
 .vscode/*
-*.png
+bin/*
