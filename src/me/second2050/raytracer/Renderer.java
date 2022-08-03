@@ -21,14 +21,14 @@ class Renderer extends Thread {
     }
 
     public void run() {
-        System.out.printf("THREAD%d: Starting rendering! %d→%d\n", id, start, end);
+        System.out.printf("THREAD%d: Starting rendering! %d → %d\n", id, start, end);
 
         StringBuilder sb = new StringBuilder();
 
-        for ( int i = start; i >= end; i-- ) {
-            for ( int j = 0; j < RaytracerMain.IMAGE_WIDTH; j++ ) {
+        for ( int i = start; i >= end; i-- ) { // Scanlines
+            for ( int j = 0; j < RaytracerMain.IMAGE_WIDTH; j++ ) { // Pixels of scanline
                 Color pixelColor = new Color(0, 0, 0);
-                for ( int k = 0; k < RaytracerMain.SAMPLES_PER_PIXEL; k++ ) {
+                for ( int k = 0; k < RaytracerMain.SAMPLES_PER_PIXEL; k++ ) { // Samples for anti-aliasing
                      double u = (j + RAND.nextDouble()) / (RaytracerMain.IMAGE_WIDTH-1);
                      double v = (i + RAND.nextDouble()) / (RaytracerMain.IMAGE_HEIGHT-1);
                      Ray r = cam.getRay(u, v);

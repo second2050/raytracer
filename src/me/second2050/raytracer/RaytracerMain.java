@@ -71,17 +71,18 @@ class RaytracerMain {
 
         // render image
         output.printf("P3\n%d %d\n255\n", IMAGE_WIDTH, IMAGE_HEIGHT); // write file header
-        System.out.printf("\n");
         Renderer[] renderers = new Renderer[Runtime.getRuntime().availableProcessors()];
         int start = IMAGE_HEIGHT - 1;
         int step = (int)Math.round(IMAGE_HEIGHT / (double)renderers.length); // rounding to ensure that all scanlines are rendered
         int end = IMAGE_HEIGHT - step;
+        // creating and starting rendering thread with their corresponding "zones"
         for (int i = 0; i < renderers.length; i++) {
             renderers[i] = new Renderer(i, start, end, cam, world);
             renderers[i].start();
             start = end - 1;
             end = (end - step) < 0 ? 0 : (end - step); // set end to 0 if below
         }
+        // waiting for the threads to finish
         for (int i = 0; i < renderers.length; i++) {
             try {
                 renderers[i].join();
@@ -89,6 +90,7 @@ class RaytracerMain {
                 e.printStackTrace();
                 System.exit(100);
             }
+            // writing their result into the output file
             output.printf("%s", renderers[i].getResult());
         }
 
