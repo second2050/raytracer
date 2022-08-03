@@ -5,7 +5,7 @@ import java.io.*;
 class RaytracerMain {
     // global variables
     static final double IMAGE_ASPECT_RATIO = 16.0/9.0; // without decimal place it will be 1
-    static final int IMAGE_WIDTH = 3840;
+    static final int IMAGE_WIDTH = 1920;
     static final int IMAGE_HEIGHT = (int)(IMAGE_WIDTH / IMAGE_ASPECT_RATIO);
     static final String OUTPUT_FILE_NAME = "output.ppm";
     static final int SAMPLES_PER_PIXEL = 50;
@@ -74,13 +74,13 @@ class RaytracerMain {
         System.out.printf("\n");
         Renderer[] renderers = new Renderer[Runtime.getRuntime().availableProcessors()];
         int start = IMAGE_HEIGHT - 1;
-        int step = (IMAGE_HEIGHT / renderers.length);
+        int step = (int)Math.round(IMAGE_HEIGHT / (double)renderers.length); // rounding to ensure that all scanlines are rendered
         int end = IMAGE_HEIGHT - step;
         for (int i = 0; i < renderers.length; i++) {
             renderers[i] = new Renderer(i, start, end, cam, world);
             renderers[i].start();
             start = end - 1;
-            end = end - step;
+            end = (end - step) < 0 ? 0 : (end - step); // set end to 0 if below
         }
         for (int i = 0; i < renderers.length; i++) {
             try {
