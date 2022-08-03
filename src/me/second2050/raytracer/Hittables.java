@@ -20,14 +20,12 @@ public class Hittables extends Hittable {
 
     @Override
     HitRecord hit(Ray r, double tMin, double tMax) {
-        boolean hitAnything = false;
         double closest = tMax;
         HitRecord rec = new HitRecord();
 
         for (Hittable object : objects) {
             HitRecord tempRec = object.hit(r, tMin, closest);
             if (tempRec.gotHit()) {
-                hitAnything = true;
                 closest = tempRec.getT();
                 rec = tempRec;
             }
