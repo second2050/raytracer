@@ -1,13 +1,10 @@
 package me.second2050.raytracer;
 
 import java.io.*;
-import java.text.DecimalFormat;
-
-import javax.swing.text.NumberFormatter;
 
 class RaytracerMain {
     // global variables
-    static final double IMAGE_ASPECT_RATIO = 600.0/240.0; // without decimal place it will be 1
+    static final double IMAGE_ASPECT_RATIO = 16.0/9.0; // without decimal place it will be 1
     static final int IMAGE_WIDTH = 3840;
     static final int IMAGE_HEIGHT = (int)(IMAGE_WIDTH / IMAGE_ASPECT_RATIO);
     static final String OUTPUT_FILE_NAME = "output.ppm";
